@@ -12,6 +12,11 @@ class Category extends Model
 {
     use HasFactory;
 
+
+    protected $fillable = [
+        "name"
+    ];
+
     /**
      * Get the posts for the blog category.
      */

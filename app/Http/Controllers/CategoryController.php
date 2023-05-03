@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -11,6 +12,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
+
+        return Category::get();
         //
     }
 
@@ -19,7 +22,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            "name"=>"required"
+        ]);
+
+
+        $Category = Category::create( $request->all() );
+        return $Category;
     }
 
     /**
