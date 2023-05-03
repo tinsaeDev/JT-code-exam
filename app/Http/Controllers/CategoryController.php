@@ -24,7 +24,7 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            "name"=>"required"
+            "name"=>"string|required"
         ]);
 
 
@@ -45,7 +45,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+
+        $request->validate([
+            "name"=>"string"
+        ]);
+
+     
+        $category->update( $request->all() );
+        return $category;
     }
 
     /**
