@@ -4,6 +4,9 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use Illuminate\Support\Facades\Storage;
+
+
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Image>
  */
@@ -16,8 +19,10 @@ class ImageFactory extends Factory
      */
     public function definition(): array
     {
+
+
         return [
-            "path"=> fake()->image(public_path(), 360, 360)
+            "path"=> fake()->image(Storage::disk('local')->path("public"), 360, 360)
             
         ];
     }
