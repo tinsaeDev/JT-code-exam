@@ -15,19 +15,31 @@ class DatabaseSeeder extends Seeder
 
 
     $this->call([
-        UserSeeder::class,
-        PostSeeder::class,
-        CommentSeeder::class,
+        // CategorySeeder::class,
+        // PostSeeder::class,
+        // CommentSeeder::class,
+        // ImageSeeder::class
     ]);
 
 
 
+    Category::factory(20)->create()
+        ->each(function($category){
+            Post::factory(3)->create([
+                'category_id' => $category->id,              
+            ])->each( function($post){
+                Comment::factory(3)->create( [
+                    "post_id"=>$post->id
+                ] );
 
-        App\Models\User::factory(10)->create();
+                Image::factory( fake()->numberBetween(0, 5) )->create( [
+                    "model_id"=>$post->id,                    
+                    "model"=>Post::class,
+                ] );
+            } );
+    });
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+
+
     }
 }

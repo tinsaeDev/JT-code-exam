@@ -17,7 +17,8 @@ class ImageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "path"=> fake()->image(public_path(), 360, 360)
+            
         ];
     }
 }
