@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Post;
+use App\Models\Comment;
 
 class CommentController extends Controller
 {
@@ -27,9 +28,9 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Post $post,Comment $comment)
     {
-        //
+        return $comment;
     }
 
     /**
