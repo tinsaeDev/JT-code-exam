@@ -49,7 +49,17 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+
+        $request->validate(
+                [
+                    "title"=>"string",
+                    "content"=>"string",
+                    "category_id"=>"exists:categories,id"   
+                ]
+            );
+
+            $post->update( $request->all() );
+            return $post;
     }
 
     /**
