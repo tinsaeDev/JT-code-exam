@@ -21,7 +21,19 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+            $request->validate(
+                [
+                    "title"=>"required|string",
+                    "content"=>"required|string",
+                    "category_id"=>"required|exists:categories"
+                ]
+            );
+
+
+            $post = Post::create( $request->all() );
+            return $post;
+
+
     }
 
     /**
