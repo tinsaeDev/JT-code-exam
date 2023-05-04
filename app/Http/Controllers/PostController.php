@@ -25,7 +25,7 @@ class PostController extends Controller
                 [
                     "title"=>"required|string",
                     "content"=>"required|string",
-                    "category_id"=>"required|exists:categories"
+                    "category_id"=>"required|exists:categories,id"
                 ]
             );
 

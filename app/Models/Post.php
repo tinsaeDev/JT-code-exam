@@ -13,6 +13,10 @@ class Post extends Model
 {
     use HasFactory;
 
+
+    protected $fillable = [
+        "title","content","category_id"
+    ];
          /**
      * Get the comments of  post.
      */
