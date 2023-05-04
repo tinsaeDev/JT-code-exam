@@ -20,9 +20,25 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request,Post $post)
     {
-        //
+
+        $request->validate( [
+                            "text"=>"required|string"
+                            ]);
+
+
+
+           $comment =     Comment::make( $request->all() );
+ 
+
+    $post->comments()->saveMany([
+        $comment
+    ]);
+
+    
+
+    return $comment;
     }
 
     /**

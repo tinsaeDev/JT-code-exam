@@ -14,6 +14,9 @@ class Comment extends Model
     use HasFactory;
 
 
+    protected $fillable = [
+        "text"
+    ];
              /**
      * Get the posts for the blog category.
      */
