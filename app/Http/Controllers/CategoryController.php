@@ -24,12 +24,15 @@ class CategoryController extends Controller
     {
 
         $request->validate([
-            "name"=>"string|required"
+            "name"=>"string|required|max:25"
         ]);
 
 
         $Category = Category::create( $request->all() );
-        return $Category;
+        
+        return response()->json([
+            "data"=>$Category
+        ],201);
     }
 
     /**
