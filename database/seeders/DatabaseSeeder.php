@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
 
 
-    Category::factory(3)->create()
+    Category::factory(1)->create()
         ->each(function($category){
 
             // Create posts under category
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
                 ] )->each( function($comment){
                     
                     // Create fake image for comments
-                    Image::factory( fake()->numberBetween(0, 5) )->create( [
+                    Image::factory( fake()->numberBetween(0, 3) )->create( [
                         "model_id"=>$comment->id,                    
                         "model"=>Comment::class,
                     ] );
