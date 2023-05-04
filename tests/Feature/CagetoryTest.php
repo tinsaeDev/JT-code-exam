@@ -284,6 +284,4 @@ $newCategoryName = fake()->name();
          
      }
 
-
-
 }
