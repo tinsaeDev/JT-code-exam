@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
 
 
 
-    Category::factory(1)->create()
+    Category::factory(2)->create()
         ->each(function($category){
 
             // Create posts under category
-            Post::factory( fake()->numberBetween(3, 5) )->create([
+            Post::factory( fake()->numberBetween(2, 3) )->create([
                 'category_id' => $category->id,              
             ])->each( function($post){
 
@@ -42,14 +42,14 @@ class DatabaseSeeder extends Seeder
                 ] )->each( function($comment){
                     
                     // Create fake image for comments
-                    Image::factory( fake()->numberBetween(0, 3) )->create( [
+                    Image::factory( fake()->numberBetween(2, 3) )->create( [
                         "model_id"=>$comment->id,                    
                         "model"=>Comment::class,
                     ] );
                 } );
 
                 // Create fake image records for post
-                Image::factory( fake()->numberBetween(0, 5) )->create( [
+                Image::factory( fake()->numberBetween(2, 3) )->create( [
                     "model_id"=>$post->id,                    
                     "model"=>Post::class,
                 ] );
