@@ -17,12 +17,15 @@ class Comment extends Model
     protected $fillable = [
         "text"
     ];
-             /**
+     
+    /**
      * Get the posts for the blog category.
      */
+
     public function images(): HasMany
     {
-        return $this->hasMany(Image::class);
+        return $this->hasMany(Image::class, 'model_id')->where('model', Comment::class );
+
     }
 
         /**

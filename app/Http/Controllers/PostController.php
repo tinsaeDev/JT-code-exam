@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Image;
+
 use Illuminate\Http\Request;
+
+use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Facades\Storage;
+
 
 class PostController extends Controller
 {
@@ -12,7 +18,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::get();
+        return Post::with(["images","comments"])->get();
 
     }
 
@@ -25,13 +31,28 @@ class PostController extends Controller
                 [
                     "title"=>"required|string",
                     "content"=>"required|string",
-                    "category_id"=>"required|exists:categories,id"
+                    "category_id"=>"required|exists:categories,id",
+                    'images.*' => [                       
+                        "required",  File::image()
+                     ],
                 ]
             );
 
 
             $post = Post::create( $request->all() );
-            return $post;
+            foreach(   $request->file('images') as $file  )  {
+                
+                $path = $file->store("public");
+                $image = new Image();
+                
+                $image->path =$path;
+                $image->model=get_class( $post );
+                $image->model_id = $post->id;
+               $image->save();
+
+            }
+
+            return $post->with(["images"])->find( $post->id );
 
 
     }
@@ -54,7 +75,8 @@ class PostController extends Controller
                 [
                     "title"=>"string",
                     "content"=>"string",
-                    "category_id"=>"exists:categories,id"   
+                    "category_id"=>"exists:categories,id",
+                    
                 ]
             );
 

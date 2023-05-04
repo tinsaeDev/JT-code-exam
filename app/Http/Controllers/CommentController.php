@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Image;
+
+use Illuminate\Validation\Rules\File;
+
 
 class CommentController extends Controller
 {
@@ -24,21 +28,34 @@ class CommentController extends Controller
     {
 
         $request->validate( [
-                            "text"=>"required|string"
-                            ]);
+                            "text"=>"required|string",
+                            'images.*' => [                       
+                                "required",  File::image()
+                             ],
+                        ]);
 
 
 
            $comment =  Comment::make( $request->all() );
- 
+           $post->comments()->saveMany([
+                $comment
+            ]);
 
-    $post->comments()->saveMany([
-        $comment
-    ]);
 
-    
+            foreach(   $request->file('images') as $file  )  {
+                
+                $path = $file->store("public");
+                $image = new Image();
+                
+                $image->path =$path;
+                $image->model=get_class( $comment );
+                $image->model_id = $comment->id;
+                $image->save();
 
-    return $comment;
+            }
+
+            return $comment->with(["images"])->find( $comment->id );
+      
     }
 
     /**
@@ -62,7 +79,6 @@ class CommentController extends Controller
      */
     public function destroy(Post $post , Comment $comment)
     {
-
         return $comment->delete();
     }
 }

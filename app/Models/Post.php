@@ -25,6 +25,17 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+
+     /**
+     * Get the images of  post.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class, 'model_id')->where('model', Post::class );
+
+    }
+
+    
     /**
      * Get the category that owns the post.
      */

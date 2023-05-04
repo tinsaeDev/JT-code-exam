@@ -14,6 +14,8 @@ class Image extends Model
 {
     use HasFactory;
 
+
+   
     /**
      * Get the category that owns the post.
      */
