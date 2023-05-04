@@ -18,7 +18,7 @@ class CommentController extends Controller
      */
     public function index( Post $post)
     {
-        return $post->comments;
+        return $post->comments()->with(["images"])->get();
     }
 
     /**
