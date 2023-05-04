@@ -43,7 +43,11 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-     return $category;
+
+        return response()->json([
+            "data"=>$category
+        ],200);
+
     }
 
     /**
@@ -58,7 +62,9 @@ class CategoryController extends Controller
 
      
         $category->update( $request->all() );
-        return $category;
+        return response()->json([
+            "data"=>$category
+        ],200);
     }
 
     /**
