@@ -25,8 +25,7 @@ class CagetoryTest extends TestCase
     public function testCreateCategory(): void
     {
 
-       
-
+    
         $categoryName = fake()->name();
 
         $response = $this->withHeaders([
@@ -253,6 +252,37 @@ $newCategoryName = fake()->name();
          );
      }
  
+
+                 /**
+     * Test show singlw category retrieval*/
+
+     public function testDeleteCategory(): void
+     {
+ 
+ 
+ 
+        $categoryName = fake()->name();
+ 
+        
+         $creaeResponse = $this->withHeaders([
+             'Accept' => 'application/json',
+         ])->post('/api/categories', 
+             ['name' => $categoryName ]
+         );
+ 
+ 
+         $id = json_decode( $creaeResponse->getContent() ) ->data->id;
+         
+       
+         // Delete the created  category
+ 
+         $response = $this->withHeaders([
+             'Accept' => 'application/json',
+         ])->delete('/api/categories/'.$id);
+ 
+         $response->assertStatus(200);
+         
+     }
 
 
 
