@@ -60,11 +60,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-
-        $category->delete();
-        return response()->json([
-            "message"=>"Resource deleted"
-        ]);
+        return $category->delete();
     
     }
 }
