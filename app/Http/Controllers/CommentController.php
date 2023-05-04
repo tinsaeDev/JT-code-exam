@@ -29,7 +29,7 @@ class CommentController extends Controller
 
 
 
-           $comment =     Comment::make( $request->all() );
+           $comment =  Comment::make( $request->all() );
  
 
     $post->comments()->saveMany([
@@ -60,8 +60,9 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post , Comment $comment)
     {
-        //
+
+        return $comment->delete();
     }
 }
