@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string("content");
             
             // A postblongs to a single category
-            $table->foreignId('category_id')->constrained();
+            $table->foreignId('category_id')->constrained()->onDelete("cascade");;
 
             $table->timestamps();
         });

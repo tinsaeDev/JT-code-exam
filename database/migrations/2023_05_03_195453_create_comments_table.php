@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("text");
                    
             // A commnent belongs to a single post
-            $table->foreignId('post_id')->constrained();
+            $table->foreignId('post_id')->constrained()->onDelete("cascade");
             $table->timestamps();
         });
     }
