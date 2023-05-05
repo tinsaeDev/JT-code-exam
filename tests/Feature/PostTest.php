@@ -22,7 +22,7 @@ class PostTest extends TestCase
 
     private function createCategory()
     {
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(24);
 
         $categoryResponse = $this->withHeaders([
             'Accept' => 'application/json',
@@ -52,7 +52,7 @@ class PostTest extends TestCase
 
 
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             "content" => fake()->text(),
             "category_id" => $categoryId
         ];
@@ -102,7 +102,7 @@ class PostTest extends TestCase
 
 
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             "content" => fake()->text(),
             "category_id" => $categoryId,
 
@@ -169,7 +169,7 @@ class PostTest extends TestCase
 
 
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             // "content" => fake()->text(),
             "category_id" => $categoryId,
 
@@ -230,7 +230,7 @@ class PostTest extends TestCase
 
 
         $postValues = [
-            // "title" => fake()->name(),
+            // "title" => fake()->name(24),
             "content" => fake()->text(),
             "category_id" => $categoryId,
 
@@ -291,7 +291,7 @@ class PostTest extends TestCase
 
 
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             "content" => fake()->text(),
             // "category_id" => $categoryId,
 
@@ -354,7 +354,7 @@ class PostTest extends TestCase
         for ($i = 0; $i < $postCount; $i++) {
 
             $postValues = [
-                "title" => fake()->name(),
+                "title" => fake()->name(24),
                 "content" => fake()->text(),
                 "category_id" => $categoryId,
 
@@ -415,7 +415,7 @@ class PostTest extends TestCase
          */
         $categoryId = $this->createCategory();
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             "content" => fake()->text(),
             "category_id" => $categoryId,
 
@@ -465,7 +465,7 @@ class PostTest extends TestCase
         );
     }
 
-    public function testUpdatePost()
+    public function testDeletePost()
     {
 
         /**
@@ -473,7 +473,7 @@ class PostTest extends TestCase
          */
         $categoryId = $this->createCategory();
         $postValues = [
-            "title" => fake()->name(),
+            "title" => fake()->name(24),
             "content" => fake()->text(),
             "category_id" => $categoryId,
 
@@ -488,26 +488,38 @@ class PostTest extends TestCase
             '/api/posts',
             $postValues
         );
+        $postCreateResponse->assertStatus(200);
+        $postCreateResponse->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has('data')
+                ->missing("errors")
+                ->has('data.title')
+                ->whereType('data.title', "string")
+                ->has('data.title')
+                ->whereType('data.content', "string")
+
+                ->has('data.category_id')
+                ->where('data.category_id', $categoryId)
+                ->has('data.images')
+                ->where('data.images', fn ($images) => sizeof($images) === 0)
+
+
+
+        );
 
         $postId = json_decode($postCreateResponse->content())->data->id;
 
-        // Update the post
-
-
-        $newPostValues = [
-            "title" => "New Updated Name",
-            "content" => "This is updated content",
-            "category_id" => $categoryId,
-
-        ];
-        $this->withHeaders([
+        $deleteResponse = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => "application/x-www-form-urlencoded"
 
-        ])->put(
-            "/api/posts/$postId",
-            $newPostValues
+        ])->delete(
+            "/api/posts/$postId"
         );
+
+        $deleteResponse->assertStatus(200);
+
+
         // Retrieve created posts
         $response = $this->withHeaders([
             'Accept' => 'application/json'
@@ -515,25 +527,9 @@ class PostTest extends TestCase
             "/api/posts/$postId"
         );
 
-        $response->assertStatus(200);
-        $response->assertJson(
-            fn (AssertableJson $json) =>
-            $json->missing("errors")
-                ->missing("message")
-                ->has("data")
-                ->hasAll(
-                    [
-                        "data.title",
-                        "data.content",
-                        "data.id",
-                        "data.category_id",
-                        "data.images",
-                        "data.comments"
-                    ]
-                )
-                ->where( "data.content", $newPostValues["content"] )
-                ->where( "data.title",$newPostValues["title"] )
-                ->where( "data.category_id",$newPostValues["category_id"] )
-        );
+        $response->assertStatus(404);
+   
     }
+
+    
 }

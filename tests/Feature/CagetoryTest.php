@@ -25,7 +25,7 @@ class CagetoryTest extends TestCase
     {
 
 
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(25);
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
@@ -129,7 +129,7 @@ class CagetoryTest extends TestCase
 
 
 
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(24);
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
@@ -174,7 +174,7 @@ class CagetoryTest extends TestCase
 
 
 
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(24);
 
         $createResponse = $this->withHeaders([
             'Accept' => 'application/json',
@@ -189,7 +189,7 @@ class CagetoryTest extends TestCase
 
         // Retrieve the created  category
         // 
-        $newCategoryName = fake()->name();
+        $newCategoryName = fake()->name(24);
 
 
         $response = $this->withHeaders([
@@ -222,7 +222,7 @@ class CagetoryTest extends TestCase
 
 
 
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(24);
 
 
         $creaeResponse = $this->withHeaders([
@@ -266,7 +266,7 @@ class CagetoryTest extends TestCase
 
 
 
-        $categoryName = fake()->name();
+        $categoryName = fake()->name(24);
 
 
         $creaeResponse = $this->withHeaders([
