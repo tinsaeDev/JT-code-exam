@@ -92,9 +92,6 @@ class PostTest extends TestCase
     {
 
 
-
-
-
         $categoryId = $this->createCategory();
 
         Storage::fake("local");
@@ -150,6 +147,7 @@ class PostTest extends TestCase
 
         );
     }
+
 
 
     /**
@@ -279,9 +277,6 @@ class PostTest extends TestCase
      */
     public function testCreateFailsWithoutCategoryId()
     {
-
-
-
 
 
         $categoryId = $this->createCategory();
@@ -528,8 +523,5 @@ class PostTest extends TestCase
         );
 
         $response->assertStatus(404);
-   
     }
-
-    
 }
