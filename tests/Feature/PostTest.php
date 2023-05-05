@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Storage;
 class PostTest extends TestCase
 {
 
+
+
+
     public function testCreateCategory(): int
     {
 
@@ -204,8 +207,8 @@ class PostTest extends TestCase
         );
     }
 
-            /**
-        * Test a new post without title
+    /**
+    * Test a new post without title
      * @depends testCreateCategory
      */
     public function testFailsWithoutTitle($categoryId)
@@ -261,4 +264,65 @@ class PostTest extends TestCase
 
         );
     }
+
+        /**
+    * Test a new post without title
+     * @depends testCreateCategory
+     */
+    public function testFailsWithoutCategoryId($categoryId)
+    {
+
+
+
+        Storage::fake("local");
+        
+        
+
+        $postValues = [
+            "title" => fake()->name(),
+            "content" => fake()->text(),
+            // "category_id" => $categoryId,
+            
+        ];
+
+        $imageCount = fake()->numberBetween(1,5);
+
+
+        for( $i=0; $i<$imageCount; $i++ ){
+            $postValues["images"][] = UploadedFile::fake()->image("sample.png");
+        }
+
+        // $this->assert( 100,199 );
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type'=>"application/x-www-form-urlencoded"
+
+        ])->post(
+            '/api/posts',
+            $postValues
+        );
+
+        $response->assertStatus(422);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has('errors')
+                    ->has("message")                    
+                    ->missing("data")
+                    
+                    ->has("errors.category_id")
+                    ->missing("errors.title")
+                    ->missing("errors.content")
+
+                    ->whereType("errors.category_id","array")
+                    ->where("errors.category_id", fn($errors)=> $errors->contains("The category id field is required.") )
+                
+                
+                
+
+
+        );
+    }
+
+    
+    
 }
