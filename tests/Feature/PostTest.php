@@ -407,7 +407,7 @@ class PostTest extends TestCase
     }
 
 
-    public function testShowAPost()
+    public function testShowPost()
     {
 
         /**
@@ -462,6 +462,78 @@ class PostTest extends TestCase
                         "data.comments"
                     ]
                 )
+        );
+    }
+
+    public function testUpdatePost()
+    {
+
+        /**
+         * Create categories
+         */
+        $categoryId = $this->createCategory();
+        $postValues = [
+            "title" => fake()->name(),
+            "content" => fake()->text(),
+            "category_id" => $categoryId,
+
+        ];
+
+
+        $postCreateResponse = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => "application/x-www-form-urlencoded"
+
+        ])->post(
+            '/api/posts',
+            $postValues
+        );
+
+        $postId = json_decode($postCreateResponse->content())->data->id;
+
+        // Update the post
+
+
+        $newPostValues = [
+            "title" => "New Updated Name",
+            "content" => "This is updated content",
+            "category_id" => $categoryId,
+
+        ];
+        $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => "application/x-www-form-urlencoded"
+
+        ])->put(
+            "/api/posts/$postId",
+            $newPostValues
+        );
+        // Retrieve created posts
+        $response = $this->withHeaders([
+            'Accept' => 'application/json'
+        ])->get(
+            "/api/posts/$postId"
+        );
+
+        $response->assertStatus(200);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->missing("errors")
+                ->missing("message")
+                ->has("data")
+                ->hasAll(
+                    [
+                        "data.title",
+                        "data.content",
+                        "data.id",
+                        "data.category_id",
+                        "data.images",
+                        "data.comments"
+                    ]
+                )
+                ->where( "data.content", $newPostValues["content"] )
+                ->where( "data.title",$newPostValues["title"] )
+                ->where( "data.category_id",$newPostValues["category_id"] )
         );
     }
 }
