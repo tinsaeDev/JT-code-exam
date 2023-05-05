@@ -18,7 +18,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::with(["images","comments"])->get();
+        $posts =  Post::with(["images","comments"])->get();
+
+        return response()->json([
+            "data"=>$posts
+        ],200);
 
     }
 

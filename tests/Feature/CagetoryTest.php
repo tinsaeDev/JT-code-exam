@@ -13,9 +13,8 @@ class CagetoryTest extends TestCase
 {
 
 
+
     use RefreshDatabase;
-
-
 
 
 
@@ -289,4 +288,5 @@ class CagetoryTest extends TestCase
 
         $response->assertStatus(200);
     }
+
 }
