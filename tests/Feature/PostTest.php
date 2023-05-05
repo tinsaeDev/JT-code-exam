@@ -20,7 +20,8 @@ class PostTest extends TestCase
 
 
 
-    private function createCategory(){
+    private function createCategory()
+    {
         $categoryName = fake()->name();
 
         $categoryResponse = $this->withHeaders([
@@ -35,12 +36,17 @@ class PostTest extends TestCase
     }
 
 
+    private function createPost()
+    {
+    }
+
+
     public function testCreatePostWithouImage()
     {
 
 
 
-  
+
         $categoryId = $this->createCategory();
 
 
@@ -88,7 +94,7 @@ class PostTest extends TestCase
 
 
 
-  
+
         $categoryId = $this->createCategory();
 
         Storage::fake("local");
@@ -154,7 +160,7 @@ class PostTest extends TestCase
 
 
 
-  
+
         $categoryId = $this->createCategory();
 
 
@@ -216,7 +222,7 @@ class PostTest extends TestCase
 
 
 
-  
+
         $categoryId = $this->createCategory();
 
         Storage::fake("local");
@@ -277,7 +283,7 @@ class PostTest extends TestCase
 
 
 
-  
+
         $categoryId = $this->createCategory();
 
         Storage::fake("local");
@@ -327,5 +333,76 @@ class PostTest extends TestCase
 
 
         );
+    }
+
+
+    /**
+     * Retrieval test cases
+     */
+
+    public function testRetrieveAll()
+    {
+
+
+        /**
+         * Create categories
+         */
+        $categoryId = $this->createCategory();
+
+        // Create (n) Posts
+        $postCount = fake()->numberBetween(1, 5);
+        for ($i = 0; $i < $postCount; $i++) {
+
+            $postValues = [
+                "title" => fake()->name(),
+                "content" => fake()->text(),
+                "category_id" => $categoryId,
+
+            ];
+            $imageCount = fake()->numberBetween(1, 5);
+            Storage::fake("local");
+            for ($j = 0; $j < $imageCount; $j++) {
+                $postValues["images"][] = UploadedFile::fake()->image("sample.png");
+            }
+
+            $this->withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => "application/x-www-form-urlencoded"
+
+            ])->post(
+                '/api/posts',
+                $postValues
+            );
+        }
+
+
+        // Retrieve created posts
+        $response = $this->withHeaders([
+            'Accept' => 'application/json'
+        ])->get(
+            '/api/posts'
+        );
+
+        $response->assertStatus(200);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->missing("errors")
+                ->missing("message")
+                ->has("data")
+                ->whereType("data", "array")
+                ->where("data", fn ($data) => sizeof($data) === $postCount)
+                ->hasAll(
+                    [
+                        "data.0.title",
+                        "data.0.content",
+                        "data.0.id",
+                        "data.0.category_id",
+                        "data.0.images",
+                        "data.0.comments"
+                    ]
+                )
+               
+        );
+        // dd($response);
     }
 }
