@@ -155,7 +155,7 @@ class PostTest extends TestCase
     /**
      * Test a new post without content
      */
-    public function testFailsWithoutContent()
+    public function testCreateFailsWithoutContent()
     {
 
 
@@ -216,7 +216,7 @@ class PostTest extends TestCase
     /**
      * Test a new post without title
      */
-    public function testFailsWithoutTitle()
+    public function testCreateFailsWithoutTitle()
     {
 
 
@@ -277,7 +277,7 @@ class PostTest extends TestCase
     /**
      * Test a new post without title
      */
-    public function testFailsWithoutCategoryId()
+    public function testCreateFailsWithoutCategoryId()
     {
 
 
