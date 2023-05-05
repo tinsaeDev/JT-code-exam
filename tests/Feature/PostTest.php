@@ -147,10 +147,10 @@ class PostTest extends TestCase
 
 
         /**
-        * Test a new post without title
+        * Test a new post without content
      * @depends testCreateCategory
      */
-    public function testFailsWithoutTitle($categoryId)
+    public function testFailsWithoutContent($categoryId)
     {
 
 
@@ -160,8 +160,8 @@ class PostTest extends TestCase
         
 
         $postValues = [
-            // "title" => fake()->name(),
-            "content" => fake()->text(),
+            "title" => fake()->name(),
+            // "content" => fake()->text(),
             "category_id" => $categoryId,
             
         ];
@@ -189,7 +189,69 @@ class PostTest extends TestCase
             $json->has('errors')
                     ->has("message")                    
                     ->missing("data")
+
+                    ->missing("errors.title")
+                    ->missing("errors.category_id")
+                    ->has("errors.content")
+
+                    ->whereType("errors.content","array")
+                    ->where("errors.content", fn($errors)=> $errors->contains("The content field is required.") )
+                
+                
+                
+
+
+        );
+    }
+
+            /**
+        * Test a new post without title
+     * @depends testCreateCategory
+     */
+    public function testFailsWithoutTitle($categoryId)
+    {
+
+
+
+        Storage::fake("local");
+        
+        
+
+        $postValues = [
+            // "title" => fake()->name(),
+            "content" => fake()->text(),
+            "category_id" => $categoryId,
+            
+        ];
+
+        $imageCount = fake()->numberBetween(1,5);
+
+
+        for( $i=0; $i<$imageCount; $i++ ){
+            $postValues["images"][] = UploadedFile::fake()->image("sample.png");
+        }
+
+        // $this->assert( 100,199 );
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type'=>"application/x-www-form-urlencoded"
+
+        ])->post(
+            '/api/posts',
+            $postValues
+        );
+
+        $response->assertStatus(422);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has('errors')
+                    ->has("message")                    
+                    ->missing("data")
+                    
                     ->has("errors.title")
+                    ->missing("errors.category_id")
+                    ->missing("errors.content")
+
                     ->whereType("errors.title","array")
                     ->where("errors.title", fn($errors)=> $errors->contains("The title field is required.") )
                 
