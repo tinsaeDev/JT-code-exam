@@ -81,7 +81,10 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        $post = $post->with(["images","comments"])->find( $post->id );
+        return response()->json([
+            "data"=>$post
+        ],200);
     }
 
     /**

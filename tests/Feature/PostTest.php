@@ -337,7 +337,7 @@ class PostTest extends TestCase
 
 
     /**
-     * Retrieval test cases
+     * Retrieval all posts test cases
      */
 
     public function testRetrieveAll()
@@ -401,8 +401,67 @@ class PostTest extends TestCase
                         "data.0.comments"
                     ]
                 )
-               
+
         );
         // dd($response);
+    }
+
+
+    public function testShowAPost()
+    {
+
+        /**
+         * Create categories
+         */
+        $categoryId = $this->createCategory();
+        $postValues = [
+            "title" => fake()->name(),
+            "content" => fake()->text(),
+            "category_id" => $categoryId,
+
+        ];
+        $imageCount = fake()->numberBetween(1, 5);
+        Storage::fake("local");
+        for ($j = 0; $j < $imageCount; $j++) {
+            $postValues["images"][] = UploadedFile::fake()->image("sample.png");
+        }
+
+        $postCreateResponse = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => "application/x-www-form-urlencoded"
+
+        ])->post(
+            '/api/posts',
+            $postValues
+        );
+
+        $postId = json_decode($postCreateResponse->content())->data->id;
+
+        // Retrieve the post
+
+        // Retrieve created posts
+        $response = $this->withHeaders([
+            'Accept' => 'application/json'
+        ])->get(
+            "/api/posts/$postId"
+        );
+
+        $response->assertStatus(200);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->missing("errors")
+                ->missing("message")
+                ->has("data")
+                ->hasAll(
+                    [
+                        "data.title",
+                        "data.content",
+                        "data.id",
+                        "data.category_id",
+                        "data.images",
+                        "data.comments"
+                    ]
+                )
+        );
     }
 }
