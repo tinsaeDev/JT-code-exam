@@ -27,6 +27,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+
+
             $request->validate(
                 [
                     "title"=>"required|string",
@@ -39,20 +41,33 @@ class PostController extends Controller
             );
 
 
-            $post = Post::create( $request->all() );
-            foreach(   $request->file('images') as $file  )  {
-                
-                $path = $file->store("public");
-                $image = new Image();
-                
-                $image->path =$path;
-                $image->model=get_class( $post );
-                $image->model_id = $post->id;
-               $image->save();
 
+
+            $post = Post::create( $request->all() );
+
+           
+
+            if( $request->has("images") ){
+                foreach(   $request->file('images') as $file  )  {
+                
+                    $path = $file->store("public");
+                    $image = new Image();
+                    
+                    $image->path =$path;
+                    $image->model=get_class( $post );
+                    $image->model_id = $post->id;
+                   $image->save();
+    
+                }
             }
 
-            return $post->with(["images"])->find( $post->id );
+            
+
+            $post = $post->with(["images"])->find( $post->id );
+            return response()->json([
+                "data"=>$post
+            ],200);
+
 
 
     }

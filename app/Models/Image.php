@@ -20,6 +20,11 @@ class Image extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        "path",
+        "model",
+        "model_id"
+    ];
     protected $appends = ['url'];
 
 

@@ -16,7 +16,7 @@ class CagetoryTest extends TestCase
     use RefreshDatabase;
 
 
-    
+
 
 
     /**
@@ -25,25 +25,25 @@ class CagetoryTest extends TestCase
     public function testCreateCategory(): void
     {
 
-    
+
         $categoryName = fake()->name();
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            ['name' => $categoryName ]
+        ])->post(
+            '/api/categories',
+            ['name' => $categoryName]
         );
         $response->assertStatus(201);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('data')
-                        ->has('data.name')
-                        ->whereType('data.name', "string" )
-                        ->where('data.name', $categoryName )
+            $json->has('data')
+                ->has('data.name')
+                ->whereType('data.name', "string")
+                ->where('data.name', $categoryName)
 
 
         );
-
     }
 
     /**
@@ -53,65 +53,68 @@ class CagetoryTest extends TestCase
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            ['name' => "" ]
+        ])->post(
+            '/api/categories',
+            ['name' => ""]
         );
         $response->assertStatus(422);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('message')
-                    ->has('errors')
-                        ->has('errors.name')
-                        ->whereType('errors.name', "array" )
-                        
+            $json->has('message')
+                ->has('errors')
+                ->has('errors.name')
+                ->whereType('errors.name', "array")
+
 
         );
     }
 
 
-        /**
+    /**
      * Test With No name responses     */
     public function testNotCreatedWithNoName(): void
     {
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            [  ]
+        ])->post(
+            '/api/categories',
+            []
         );
         $response->assertStatus(422);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('message')
-                    ->has('errors')
-                        ->has('errors.name')
-                        ->whereType('errors.name', "array" )
-                        
+            $json->has('message')
+                ->has('errors')
+                ->has('errors.name')
+                ->whereType('errors.name', "array")
+
 
         );
     }
 
 
-            /**
+    /**
      * Test With No name responses     */
     public function testNotCreatedWithLongName(): void
     {
-       
+
 
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            [ "name"=>fake()->text() ]
+        ])->post(
+            '/api/categories',
+            ["name" => fake()->text()]
         );
         $response->assertStatus(422);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('message')
-                    ->has('errors')
-                        ->has('errors.name')
-                        ->whereType('errors.name', "array" )
-                        ->where('errors.name', fn ($nameErrors) => $nameErrors->contains("The name field must not be greater than 25 characters.") )        
+            $json->has('message')
+                ->has('errors')
+                ->has('errors.name')
+                ->whereType('errors.name', "array")
+                ->where('errors.name', fn ($nameErrors) => $nameErrors->contains("The name field must not be greater than 25 characters."))
         );
     }
 
@@ -125,14 +128,15 @@ class CagetoryTest extends TestCase
     public function testRetrieveAllCategories(): void
     {
 
-               
+
 
         $categoryName = fake()->name();
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            ['name' => $categoryName ]
+        ])->post(
+            '/api/categories',
+            ['name' => $categoryName]
         );
 
 
@@ -146,21 +150,21 @@ class CagetoryTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('data')
-                    ->missing('errors')
-                        ->whereType('data', "array" )
-                        ->has( 'data.0.name' )
-                        ->where(  'data.0.name' , $categoryName  )
-                        ->has( 'data.0.id' )
-                        ->has( 'data.0.created_at' )
-                        ->has( 'data.0.updated_at' )
-                        ->whereType('data.0.name', "string" )
+            $json->has('data')
+                ->missing('errors')
+                ->whereType('data', "array")
+                ->has('data.0.name')
+                ->where('data.0.name', $categoryName)
+                ->has('data.0.id')
+                ->has('data.0.created_at')
+                ->has('data.0.updated_at')
+                ->whereType('data.0.name', "string")
         );
     }
 
 
 
-        /**
+    /**
      * Test update a category */
 
     public function testCategoryUpdate(): void
@@ -169,119 +173,120 @@ class CagetoryTest extends TestCase
 
 
 
-               
+
 
         $categoryName = fake()->name();
 
         $createResponse = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->post('/api/categories', 
-            ['name' => $categoryName ]
+        ])->post(
+            '/api/categories',
+            ['name' => $categoryName]
         );
-        
 
-        $id = json_decode( $createResponse->getContent() ) ->data->id;
-        
-      
+
+        $id = json_decode($createResponse->getContent())->data->id;
+
+
         // Retrieve the created  category
-// 
-$newCategoryName = fake()->name();
-        
+        // 
+        $newCategoryName = fake()->name();
+
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->put('/api/categories/'.$id,[
-            "name"=>$newCategoryName
+        ])->put('/api/categories/' . $id, [
+            "name" => $newCategoryName
         ]);
 
         // $response->dd();
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) =>
-                $json->has('data')
-                    ->missing('errors')
-                        ->has( 'data.name' )
-                        ->whereType('data.name', "string" )
-                        ->where(  'data.name' ,   trim ( $newCategoryName ) )
-                        ->has( 'data.id' )
-                        ->where( 'data.id',$id )
-                        ->has( 'data.created_at' )
-                        ->has( 'data.updated_at' )
+            $json->has('data')
+                ->missing('errors')
+                ->has('data.name')
+                ->whereType('data.name', "string")
+                ->where('data.name',   trim($newCategoryName))
+                ->has('data.id')
+                ->where('data.id', $id)
+                ->has('data.created_at')
+                ->has('data.updated_at')
         );
     }
 
-            /**
+    /**
      * Test show singlw category retrieval*/
 
-     public function testSingleCategoryRetrieval(): void
-     {
- 
- 
- 
-        $categoryName = fake()->name();
- 
-        
-         $creaeResponse = $this->withHeaders([
-             'Accept' => 'application/json',
-         ])->post('/api/categories', 
-             ['name' => $categoryName ]
-         );
- 
- 
-         $id = json_decode( $creaeResponse->getContent() ) ->data->id;
-         
-       
-         // Retrieve the created  category
- 
-         $response = $this->withHeaders([
-             'Accept' => 'application/json',
-         ])->get('/api/categories/'.$id);
- 
-         $response->assertStatus(200);
-         $response->assertJson(
-             fn (AssertableJson $json) =>
-                 $json->has('data')
-                     ->missing('errors')
-                         ->has( 'data.name' )
-                         ->whereType('data.name', "string" )
-                         ->where(  'data.name' ,   trim ( $categoryName ) )
-                         ->has( 'data.id' )
-                         ->where( 'data.id',$id )
-                         ->has( 'data.created_at' )
-                         ->has( 'data.updated_at' )
-         );
-     }
- 
+    public function testSingleCategoryRetrieval(): void
+    {
 
-                 /**
+
+
+        $categoryName = fake()->name();
+
+
+        $creaeResponse = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(
+            '/api/categories',
+            ['name' => $categoryName]
+        );
+
+
+        $id = json_decode($creaeResponse->getContent())->data->id;
+
+
+        // Retrieve the created  category
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->get('/api/categories/' . $id);
+
+        $response->assertStatus(200);
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->has('data')
+                ->missing('errors')
+                ->has('data.name')
+                ->whereType('data.name', "string")
+                ->where('data.name',   trim($categoryName))
+                ->has('data.id')
+                ->where('data.id', $id)
+                ->has('data.created_at')
+                ->has('data.updated_at')
+        );
+    }
+
+
+    /**
      * Test show singlw category retrieval*/
 
-     public function testDeleteCategory(): void
-     {
- 
- 
- 
-        $categoryName = fake()->name();
- 
-        
-         $creaeResponse = $this->withHeaders([
-             'Accept' => 'application/json',
-         ])->post('/api/categories', 
-             ['name' => $categoryName ]
-         );
- 
- 
-         $id = json_decode( $creaeResponse->getContent() ) ->data->id;
-         
-       
-         // Delete the created  category
- 
-         $response = $this->withHeaders([
-             'Accept' => 'application/json',
-         ])->delete('/api/categories/'.$id);
- 
-         $response->assertStatus(200);
-         
-     }
+    public function testDeleteCategory(): void
+    {
 
+
+
+        $categoryName = fake()->name();
+
+
+        $creaeResponse = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->post(
+            '/api/categories',
+            ['name' => $categoryName]
+        );
+
+
+        $id = json_decode($creaeResponse->getContent())->data->id;
+
+
+        // Delete the created  category
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+        ])->delete('/api/categories/' . $id);
+
+        $response->assertStatus(200);
+    }
 }
