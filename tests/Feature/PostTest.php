@@ -191,7 +191,7 @@ class PostTest extends TestCase
                     ->missing("data")
                     ->has("errors.title")
                     ->whereType("errors.title","array")
-                    ->where("errors.title.0","The title field is required.")
+                    ->where("errors.title", fn($errors)=> $errors->contains("The title field is required.") )
                 
                 
                 
